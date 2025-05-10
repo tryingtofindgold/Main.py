@@ -107,7 +107,7 @@ def scan_and_trade():
         except Exception as e:
             print(f"Error with {symbol}: {e}")
 
-# Main loop — runs every 5 minutes
+# Main loop â runs every 5 minutes
 while True:
     scan_and_trade()
     time.sleep(300)  # 300 seconds = 5 minutes

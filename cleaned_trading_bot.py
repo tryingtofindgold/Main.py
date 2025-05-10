@@ -1,3 +1,5 @@
+Variables
+
 import time
 from datetime import datetime, timedelta
 from alpaca.data.historical import CryptoHistoricalDataClient
@@ -5,7 +7,7 @@ from alpaca.data.requests import CryptoBarsRequest
 from alpaca.data.timeframe import TimeFrame
 import alpaca_trade_api as tradeapi
 
-# Your Alpaca API keys
+# Directly written API keys (NOT recommended for production or public repos)
 API_KEY = "PKEXQW93W9K2IPE8S0UX"
 SECRET_KEY = "go28YfYeGif9v8FuIvv9qSyCKxyvzjvG6aHIkRid"
 
@@ -20,16 +22,15 @@ coin_pairs = [
     "LINK/USD", "DOGE/USD", "SHIB/USD", "ATOM/USD", "ALGO/USD",
     "DOT/USD", "APE/USD"
 ]
-VOLATILITY_THRESHOLD = 0.3     # 0.3% price swing in 5 minutes
-PROFIT_TARGET = 0.03           # 3% profit target
-STOP_LOSS_THRESHOLD = -0.10    # 10% stop-loss
+VOLATILITY_THRESHOLD = 0.3
+PROFIT_TARGET = 0.03
+STOP_LOSS_THRESHOLD = -0.10
 entry_prices = {}
 
-# Function to dynamically get trade size (1% of account cash)
 def get_dynamic_notional():
     account = trade_client.get_account()
     total_cash = float(account.cash)
-    return total_cash * 0.01  # Use 1% of available cash
+    return total_cash * 0.01
 
 def scan_and_trade():
     print(f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Scanning for trades...")
@@ -53,7 +54,6 @@ def scan_and_trade():
                 latest_price = df['close'].iloc[-1]
                 trade_symbol = symbol.replace("/", "")
 
-                # Sell logic
                 if trade_symbol in entry_prices:
                     bought_price = entry_prices[trade_symbol]
                     gain = (latest_price - bought_price) / bought_price
@@ -87,7 +87,6 @@ def scan_and_trade():
                     else:
                         print(f"{symbol}: Holding ({gain*100:.2f}%)")
 
-                # Buy logic
                 elif max_change >= VOLATILITY_THRESHOLD and trade_symbol not in entry_prices:
                     print(f"{symbol} volatile ({max_change:.2f}%) - BUYING")
                     notional = get_dynamic_notional()
@@ -107,7 +106,6 @@ def scan_and_trade():
         except Exception as e:
             print(f"Error with {symbol}: {e}")
 
-# Main loop â runs every 5 minutes
 while True:
     scan_and_trade()
-    time.sleep(300)  # 300 seconds = 5 minutes
+    time.sleep(300)
